@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 
+
 <head>
   <title>Geocoding Service</title>
   <style>
@@ -8,11 +9,13 @@
       font-family: Arial, sans-serif;
     }
 
+
     #map {
       width: 100%;
       height: 70vh;
       margin-bottom: 1em;
     }
+
 
     .form-control {
       display: flex;
@@ -20,9 +23,11 @@
       margin-bottom: 0.5em;
     }
 
+
     .form-control label {
       flex: 1;
     }
+
 
     .form-control input,
     .form-control div {
@@ -30,10 +35,12 @@
       padding: 0.5em;
     }
 
+
     .bottom-section {
       display: flex;
       justify-content: space-between;
     }
+
 
     .bottom-section>div {
       width: 48%;
@@ -43,10 +50,12 @@
       box-sizing: border-box;
     }
 
+
     .bottom-section ul {
       list-style: none;
       padding: 0;
     }
+
 
     .bottom-section li {
       margin-bottom: 10px;
@@ -54,6 +63,7 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
+
 
     button {
       padding: 5px 10px;
@@ -67,8 +77,12 @@
   </style>
 </head>
 
+
 <body>
   <div id="map"></div>
+
+
+
 
 
 
@@ -80,16 +94,19 @@
         <input type="text" id="start" name="start">
       </div>
 
+
       <div class="form-control">
         <label for="end">Adresse de destination:</label>
         <input type="text" id="end" name="end">
       </div>
+
 
       <div class="form-control">
         <button onclick="calculateDistance()">Calculer la distance</button>
       </div>
       <div id="distance-result"></div>
     </div>
+
 
     <div>
       <h3>Rendez-vous</h3>
@@ -100,12 +117,19 @@
     </div>
   </div>
 
+
 </body>
+
 
 </html>
 
 
+
+
 <script>
+
+
+
 
 
 
@@ -115,9 +139,12 @@
   var openInfoWindow = null;
 
 
+
+
   function geocodeStartAddress() {
     var startAddress = document.getElementById('start').value;
     var geocoder = new google.maps.Geocoder();
+
 
     geocoder.geocode({ address: startAddress }, function (results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
@@ -126,7 +153,9 @@
           startMarker.setMap(null);
         }
 
+
         var location = results[0].geometry.location;
+
 
         // Ajouter un nouveau marqueur avec un picot vert
         startMarker = new google.maps.Marker({
@@ -134,6 +163,7 @@
           position: location,
           icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
         });
+
 
         // Déplace la carte pour qu'elle soit centrée sur le nouveau marqueur
         map.setCenter(location);
@@ -161,10 +191,12 @@
     };
   }
 
+
   async function initMap() {
     const data = await fetchAllAccounts();
     const centers = data.accounts.filter(center => center.Maison_m_re === false).map(mapAccountData);
     window.centers = centers;
+
 
     var center = { lat: 48.8566, lng: 2.3522 };
     map = new google.maps.Map(document.getElementById('map'), {
@@ -179,7 +211,9 @@
     });
     window.map = map;
 
+
     var geocoder = new google.maps.Geocoder();
+
 
     centers.forEach(function (center, index) {
       geocoder.geocode({ address: center.address }, function (results, status) {
@@ -190,6 +224,7 @@
             position: location,
             icon: getMarkerIcon(center)
           });
+
 
           var infoWindowContent =
             '<div style="font-family: Arial, sans-serif; background-color: #fff; padding: 10px; border: 1px solid #333; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); width: 300px;">' +
@@ -204,30 +239,40 @@
             '<button style="background-color: #007bff; color: #fff; padding: 5px 10px; border: none; cursor: pointer;" onclick="openDetailsPage(' + index + ')">Voir détails</button>' +
             '</div>';
 
+
           var infoWindow = new google.maps.InfoWindow({
             content: infoWindowContent
           });
 
 
+
+
           var infoWindow = new google.maps.InfoWindow({
             content: infoWindowContent
           });
+
+
+
 
 
 
           marker.addListener('click', function () {
             document.getElementById('end').value = center.address;
 
+
             // Fermer l'info-bulle précédente si elle est ouverte
             if (openInfoWindow) {
               openInfoWindow.close();
             }
 
+
             infoWindow.open(map, marker);
             openInfoWindow = infoWindow; // Mettre à jour l'info-bulle ouverte actuellement
           });
 
+
           markers.push(marker);
+
 
         } else {
           console.log("Erreur de géocodage pour l'adresse: " + center.address + ", statut: " + status);
@@ -235,13 +280,16 @@
       });
     });
 
+
     var autocompleteStart = new google.maps.places.Autocomplete(
       document.getElementById('start'),
       { types: ['geocode'] }
     );
 
+
     autocompleteStart.setFields(['address_component']);
   }
+
 
   function getMarkerIcon(center) {
     markerColor = center.markerColor ? center.markerColor.toLowerCase() : "yellow"
@@ -267,22 +315,27 @@
     }
   }
 
+
   function calculateDistance() {
     // Votre fonction de calcul de distance ici
     var startAddress = document.getElementById('start').value;
     var endAddress = document.getElementById('end').value;
 
+
     var geocoder = new google.maps.Geocoder();
+
 
     geocoder.geocode({ address: startAddress }, function (startResults, startStatus) {
       if (startStatus === google.maps.GeocoderStatus.OK) {
         var startLocation = startResults[0].geometry.location;
+
 
         geocoder.geocode({
           address: endAddress
         }, function (endResults, endStatus) {
           if (endStatus === google.maps.GeocoderStatus.OK) {
             var endLocation = endResults[0].geometry.location;
+
 
             var distanceService = new google.maps.DistanceMatrixService();
             distanceService.getDistanceMatrix({
@@ -294,8 +347,10 @@
                 var distance = response.rows[0].elements[0].distance.text;
                 var duration = response.rows[0].elements[0].duration.text;
 
+
                 var resultElement = document.getElementById('distance-result');
                 resultElement.innerHTML = 'Distance: ' + distance + '<br>' + 'Duration: ' + duration;
+
 
                 // Affichage du trajet sur la carte
                 var directionsService = new google.maps.DirectionsService();
@@ -306,11 +361,13 @@
                   }
                 });
 
+
                 var request = {
                   origin: startLocation,
                   destination: endLocation,
                   travelMode: 'DRIVING'
                 };
+
 
                 directionsService.route(request, function (result, status) {
                   if (status === 'OK') {
@@ -333,8 +390,10 @@
     });
   }
 
+
   function openDetailsPage(centerIndex) {
     var center = window.centers[centerIndex];
+
 
     var detailsPageContent =
       '<html>' +
@@ -393,10 +452,13 @@
       '</body>' +
       '</html>';
 
+
     var detailsWindow = window.open('', '_blank');
     detailsWindow.document.write(detailsPageContent);
     detailsWindow.document.close();
   }
+
+
 
 
   function expandAddress(inputId) {
@@ -415,12 +477,17 @@
 
 
 
+
+
+
   function focusStartInput() {
     // Votre fonction pour se concentrer sur l'entrée du départ ici
     var startInput = document.getElementById('start');
     startInput.focus();
   }
   document.getElementById('start').addEventListener('change', geocodeStartAddress);
+
+
 
 
 </script>
@@ -435,15 +502,17 @@
     setDate(date);
   }
 
+
   function initializeGapiClient() {
     return gapi.client.init({
-      'apiKey': "AIzaSyBI5asjJVP6vqfk5NZCou5mh2iilANRjyU",
+      'apiKey': "AIzaSyBLx2sI2_nIAlAfQ10FKaq8s_2Zd7EhQVw",
       'clientId': "513516336164-5o81eom8k8s03lgsrj0gd4mp6auuu4d9.apps.googleusercontent.com",
       'scope': 'https://www.googleapis.com/auth/calendar.readonly',
       'cookiePolicy': 'single_host_origin',
       'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
     }).then(loadAppointments);
   }
+
 
   //Format date to Paris UTC
   function setDate(date) {
@@ -452,6 +521,7 @@
     let outputDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Remap to yyyy-mm-dd
     document.getElementById('date').value = outputDate;
   }
+
 
   //On user click next or previous date
   function changeDate(change) {
@@ -462,6 +532,7 @@
     loadAppointments();
   }
 
+
   function loadAppointments() {
     const date = document.getElementById('date').value;
     getDayAppointments(date).then(function (items) {
@@ -469,7 +540,7 @@
       items.forEach(function (appointment) {
         appointments += `
             <li>
-                <strong>${appointment.summary}</strong>: 
+                <strong>${appointment.summary}</strong>:
                 ${appointment.start.dateTime} - ${appointment.end.dateTime}
             </li>
                             `;
@@ -480,11 +551,15 @@
   }
 
 
+
+
   async function getDayAppointments(date) {
     clearPreviousMarkers();
 
+
     let startDate = getStartDate(date);
     let endDate = getEndDate(date);
+
 
     return gapi.client.calendar.events.list({
       'calendarId': 'icmproductivity@gmail.com',
@@ -504,6 +579,7 @@
     });
   }
 
+
   function clearPreviousMarkers() {
     if (window.eventMarkers) {
       window.eventMarkers.forEach(function (marker) {
@@ -514,11 +590,13 @@
     }
   }
 
+
   function getStartDate(date) {
     let startDate = new Date(date);
     const offset = startDate.getTimezoneOffset() + 1 * 60; // Add 2 hours for French timezone (UTC+2)
     return new Date(startDate.getTime() + offset * 60 * 1000);
   }
+
 
   function getEndDate(date) {
     let endDate = new Date(date);
@@ -528,6 +606,7 @@
     return endDate;
   }
 
+
   function updateAppointmentDateTime(appointment) {
     // Convert time to french ones
     let start = new Date(appointment.start.dateTime);
@@ -535,6 +614,7 @@
     appointment.start.dateTime = start.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' });
     appointment.end.dateTime = end.toLocaleString('fr-FR', { timeZone: 'Europe/Paris' });
   }
+
 
   function addAppointmentMarker(appointment) {
     var geocoder = new google.maps.Geocoder();
@@ -553,6 +633,7 @@
     });
   }
 
+
   function addMarkerListener(marker, appointment) {
     var infoWindowContent =
       '<strong>' + appointment.summary + '</strong><br>' +
@@ -560,15 +641,18 @@
       '<strong>End:</strong> ' + appointment.end.dateTime + '<br>' +
       '<strong>Location:</strong> ' + appointment.location;
 
+
     var infoWindow = new google.maps.InfoWindow({
       content: infoWindowContent
     });
+
 
     marker.addListener('click', function () {
       // Fermer l'info-bulle précédente si elle est ouverte
       if (openInfoWindow) {
         openInfoWindow.close();
       }
+
 
       infoWindow.open(map, marker);
       openInfoWindow = infoWindow; // Mettre à jour l'info-bulle ouverte actuellement
@@ -577,6 +661,10 @@
 
 
 
+
+
+
 </script>
+
 
 </html>
